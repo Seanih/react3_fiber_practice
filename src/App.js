@@ -1,17 +1,31 @@
+import { useEffect } from 'react';
 import {
-	RoundedBox,
 	ScrollControls,
 	Scroll,
 	Environment,
+	Sparkles,
+	Backdrop,
+	Float,
+	Ring,
 } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { useRef } from 'react';
 import { Robot } from './components/Robot';
+import baffle from 'baffle';
 
 function App() {
+  // set text effects
+	useEffect(() => {
+		const target = baffle('.title');
+		target.set({
+			characters: '░P░h░a░n░t░o░m░',
+			speed: 100,
+		});
+		target.start();
+		target.reveal(1000, 1000);
+	});
+
 	return (
 		<>
-			<color attach={'background'} args={['#333333']} />
+			<color attach='background' args={['#333333']} />
 			<ambientLight intensity={0.2} />
 			<spotLight
 				position={[0, 25, 0]}
@@ -21,14 +35,40 @@ function App() {
 				intensity={2}
 				shadow-bias={-0.0001}
 			/>
-			{/* <Environment background preset='warehouse' /> */}
-			<ScrollControls pages={3} damping={0.1}>
-				{/* Canvas contents in here will *not* scroll, but receive useScroll! */}
+			<Environment preset='warehouse' />
 
+			<ScrollControls pages={6} damping={0.1}>
 				<Robot scale={0.8} />
-				<Scroll>{/* Canvas contents in here will scroll along */}</Scroll>
+				<Sparkles size={2} color={'#fff'} scale={[10, 10, 10]}></Sparkles>
+				<Backdrop
+					receiveShadow
+					floor={20.5} // Stretches the floor segment, 0.25 by default
+					segments={100} // Mesh-resolution, 20 by default
+					scale={[50, 30, 10]}
+					position={[4, -10, 0]}
+				>
+					<meshStandardMaterial color='#0a1a1f' />
+				</Backdrop>
+
+				<Float
+					speed={4} // Animation speed, defaults to 1
+					rotationIntensity={0.5} // XYZ rotation intensity, defaults to 1
+					floatIntensity={1} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
+					floatingRange={[1, 1]} // Range of y-axis values the object will float within, defaults to [-0.1,0.1]
+				>
+					<Ring
+						scale={3.5}
+						position-z={-2.5}
+						position-y={-1}
+						args={[0, 0.95, 60]}
+						receiveShadow
+					>
+						<meshStandardMaterial color='#2a3a3f' />
+					</Ring>
+				</Float>
+
+				<Scroll></Scroll>
 				<Scroll html style={{ width: '100%' }}>
-					{/* DOM contents in here will scroll along */}
 					<h1
 						className='title'
 						style={{
@@ -36,7 +76,7 @@ function App() {
 							position: 'absolute',
 							top: `65vh`,
 							left: '50%',
-							fontSize: '13em',
+							fontSize: '11em',
 							transform: `translate(-50%,-50%)`,
 						}}
 					>
